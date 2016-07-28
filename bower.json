@@ -1,0 +1,11 @@
+{
+  "name": "geolog",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Håvard Vidme <havard.vidme@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/havardvidme/GeoLog",
+  "private": true
+}

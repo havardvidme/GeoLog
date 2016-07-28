@@ -1,0 +1,19 @@
+{
+  "name": "geolog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/havardvidme/GeoLog.git"
+  },
+  "author": "Håvard Vidme <havard.vidme@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/havardvidme/GeoLog/issues"
+  },
+  "homepage": "https://github.com/havardvidme/GeoLog#readme"
+}
