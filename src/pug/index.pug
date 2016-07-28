@@ -4,6 +4,12 @@ html
     meta(charset="utf-8")
     meta(name="viewport", content="initial-scale=1.0, user-scalable=no, width=device-width")
     title GeoLog
+    if styles
+      each style in styles
+        link(href=style, rel="stylesheet", type="text/css")
+    if scripts
+      each script in scripts
+        script(src=script, type="text/javascript")
   body
     div#react-app
     script(type="text/javascript") document.getElementById('react-app').innerHTML = 'React goes here!';
