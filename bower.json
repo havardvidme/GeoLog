@@ -7,5 +7,10 @@
   ],
   "license": "ISC",
   "homepage": "https://github.com/havardvidme/GeoLog",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "react": "^15.2.1",
+    "bootstrap": "^3.3.7",
+    "lodash": "^4.14.0"
+  }
 }
