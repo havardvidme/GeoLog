@@ -30,11 +30,12 @@ var GeoLog = React.createClass({
   render: function () {
     var positionItems = [];
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
-      positionItems.push(React.createElement(
-        'a',
-        { className: 'list-group-item', href: '#' },
-        position.timestamp
-      ));
+      positionItems.push(React.createElement(PositionItem, {
+        description: position.description,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        timestamp: position.timestamp
+      }));
     });
     return React.createElement(
       'div',

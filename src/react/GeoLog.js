@@ -29,9 +29,12 @@ var GeoLog = React.createClass({
     var positionItems = [];
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
       positionItems.push(
-        <a className="list-group-item" href="#">
-          {position.timestamp}
-        </a>
+        <PositionItem
+          description={position.description}
+          latitude={position.latitude}
+          longitude={position.longitude}
+          timestamp={position.timestamp}
+        />
       );
     });
     return (

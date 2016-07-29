@@ -1,3 +1,44 @@
+var PositionItem = React.createClass({
+  displayName: 'PositionItem',
+
+  render: function () {
+    var description = null;
+    if (this.props.description == '') {
+      description = React.createElement(
+        'p',
+        { className: this.props.description == '' ? 'hidden' : 'list-group-item-text' },
+        React.createElement('span', { 'aria-hidden': 'true', className: 'glyphicon glyphicon-comment' }),
+        ' ',
+        this.props.description
+      );
+    }
+    return React.createElement(
+      'a',
+      { className: 'list-group-item', href: '#' },
+      React.createElement(
+        'p',
+        { className: 'list-group-item-text' },
+        React.createElement('span', { 'aria-hidden': 'true', className: 'glyphicon glyphicon-map-marker' }),
+        ' ',
+        React.createElement(
+          'strong',
+          null,
+          this.props.latitude,
+          ', ',
+          this.props.longitude
+        )
+      ),
+      React.createElement(
+        'p',
+        { className: 'list-group-item-text' },
+        React.createElement('span', { 'aria-hidden': 'true', className: 'glyphicon glyphicon-time' }),
+        ' ',
+        this.props.timestamp
+      ),
+      description
+    );
+  }
+});
 var POSITION_TEMPLATE = Object.assign({}, {
   id: 0,
   description: '',
@@ -30,11 +71,12 @@ var GeoLog = React.createClass({
   render: function () {
     var positionItems = [];
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
-      positionItems.push(React.createElement(
-        'a',
-        { className: 'list-group-item', href: '#' },
-        position.timestamp
-      ));
+      positionItems.push(React.createElement(PositionItem, {
+        description: position.description,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        timestamp: position.timestamp
+      }));
     });
     return React.createElement(
       'div',
@@ -87,7 +129,7 @@ var GeoLog = React.createClass({
     this.setState({
       id: id,
       positions: positions
-    });
+    }, this.updateStorage);
   },
   getPositionError: function (error) {
     console.log('code: %s, message: %s', error.code, error.message);
