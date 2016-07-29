@@ -7,6 +7,7 @@ var prefixUrls = function (arr, prefix) {
   return arr;
 };
 
+var concat = require('gulp-concat');
 var connect = require('gulp-connect');
 var gulp = require('gulp');
 var pug = require('gulp-pug');
@@ -26,6 +27,17 @@ gulp.task('connect', function () {
   connect.server();
 });
 
+gulp.task('vendor-css', function () {
+  gulp.src(config.vendorcss)
+    .pipe(concat('vendor.min.css'))
+    .pipe(gulp.dest('./dist/css/'));
+});
+gulp.task('vendor-js', function () {
+  gulp.src(config.vendorjs)
+    .pipe(concat('vendor.min.js'))
+    .pipe(gulp.dest('./dist/js/'));
+});
+
 gulp.task('pug-build', function () {
   var locals = {
     styles: prefixUrls(config.vendorcss, '../'),
@@ -39,13 +51,18 @@ gulp.task('pug-build', function () {
     .pipe(gulp.dest('build/'));
 });
 gulp.task('pug-dist', function () {
+  var locals = {
+    styles: ['css/vendor.min.css'],
+    scripts: ['js/vendor.min.js']
+  };
   gulp.src('src/pug/*.pug')
     .pipe(pug({
+      locals: locals,
       pretty: false
     }))
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', ['pug-build', 'pug-dist', 'connect'], function () {
+gulp.task('default', ['vendor-css', 'vendor-js', 'pug-build', 'pug-dist', 'connect'], function () {
   gulp.watch('src/pug/**/*.pug', ['pug-build', 'pug-dist']);
 });
