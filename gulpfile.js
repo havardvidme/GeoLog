@@ -21,7 +21,8 @@ var config = {
   ],
   vendorcss: [
     'bower_components/bootstrap/dist/css/bootstrap.min.css'
-  ]
+  ],
+  vendorfonts: 'bower_components/bootstrap/dist/fonts/*'
 }
 
 gulp.task('connect', function () {
@@ -32,6 +33,10 @@ gulp.task('vendor-css', function () {
   gulp.src(config.vendorcss)
     .pipe(concat('vendor.min.css'))
     .pipe(gulp.dest('./dist/css/'));
+});
+gulp.task('vendor-fonts', function () {
+  gulp.src(config.vendorfonts)
+    .pipe(gulp.dest('./dist/fonts/'));
 });
 gulp.task('vendor-js', function () {
   gulp.src(config.vendorjs)
@@ -64,6 +69,6 @@ gulp.task('pug-dist', function () {
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', ['vendor-css', 'vendor-js', 'pug-build', 'pug-dist', 'connect'], function () {
+gulp.task('default', ['vendor-css', 'vendor-fonts', 'vendor-js', 'pug-build', 'pug-dist', 'connect'], function () {
   gulp.watch('src/pug/**/*.pug', ['pug-build', 'pug-dist']);
 });
