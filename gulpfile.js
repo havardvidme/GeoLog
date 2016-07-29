@@ -8,12 +8,16 @@ var prefixUrls = function (arr, prefix) {
   return res;
 };
 
+var babel = require('gulp-babel');
 var concat = require('gulp-concat');
 var connect = require('gulp-connect');
 var gulp = require('gulp');
 var pug = require('gulp-pug');
 
 var config = {
+  reactjs: [
+    'GeoLog.js'
+  ],
   vendorjs: [
     'bower_components/lodash/dist/lodash.min.js',
     'bower_components/react/react.min.js',
@@ -69,6 +73,15 @@ gulp.task('pug-dist', function () {
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', ['vendor-css', 'vendor-fonts', 'vendor-js', 'pug-build', 'pug-dist', 'connect'], function () {
+gulp.task('react-build', function () {
+  gulp.src(prefixUrls(config.reactjs, './src/react/'))
+    .pipe(babel({
+      presets: ['react']
+    }))
+    .pipe(gulp.dest('./build/js/'))
+})
+
+gulp.task('default', ['vendor-css', 'vendor-fonts', 'vendor-js', 'react-build', 'pug-build', 'pug-dist', 'connect'], function () {
   gulp.watch('src/pug/**/*.pug', ['pug-build', 'pug-dist']);
+  gulp.watch('src/react/**/*.js', ['react-build']);
 });

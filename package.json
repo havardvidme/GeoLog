@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/havardvidme/GeoLog#readme",
   "devDependencies": {
+    "babel-preset-react": "^6.11.1",
     "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "gulp-concat": "^2.6.0",
     "gulp-connect": "^4.2.0",
     "gulp-pug": "^3.0.3"
