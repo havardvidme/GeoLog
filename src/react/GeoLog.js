@@ -1,6 +1,7 @@
 var MODAL = {
   NONE: 0,
-  CONTEXT: 1
+  CONTEXT: 1,
+  REMOVE: 2
 };
 var POSITION_TEMPLATE = Object.assign({}, {
   id: 0,
@@ -56,7 +57,13 @@ var GeoLog = React.createClass({
         </div>
 
         <Modal id={MODAL.CONTEXT} label="What do you want to du?" modal={this.state.modal} name="context" onClick={this.modalClose}>
-          <p>Context modal goes here</p>
+          <button className="btn btn-danger btn-block" type="button" onClick={this.modalOpen.bind(this, MODAL.REMOVE, null)}>Remove position</button>
+          <button className="btn btn-default btn-block" type="button" onClick={this.modalClose}>Cancel</button>
+        </Modal>
+        <Modal id={MODAL.REMOVE} label="Remove position" modal={this.state.modal} name="remoe" onClick={this.modalClose}>
+          <p>Are you sure you want to remove this position?</p>
+          <button className="btn btn-danger btn-block" type="button" onClick={this.removePosition}>Yes</button>
+          <button className="btn btn-default btn-block" type="button" onClick={this.modalClose}>No</button>
         </Modal>
 
         <div className={this.state.modal == MODAL.NONE ? 'hidden' : 'modal-backdrop fade in'} />
@@ -67,17 +74,20 @@ var GeoLog = React.createClass({
   modalOpen: function (modal, id, event) {
     event.preventDefault();
     var position = _.find(this.state.positions, ['id', id]);
-    if (position !== undefined) {
-      console.log(position);
-    }
-    this.setState({
+    this.setState(position !== undefined ? {
+      modal: modal,
+      position: position
+    } : {
       modal: modal
     });
   },
   modalClose: function (event) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     this.setState({
-      modal: MODAL.NONE
+      modal: MODAL.NONE,
+      position: POSITION_TEMPLATE
     });
   },
 
@@ -86,6 +96,17 @@ var GeoLog = React.createClass({
     localStorage.setItem('positions', JSON.stringify(this.state.positions));
   },
 
+  removePosition: function () {
+    var positions = this.state.positions;
+    var index = _.findIndex(positions, ['id', this.state.position.id]);
+    if (index != -1) {
+      positions.splice(index, 1);
+      this.setState({
+        positions: positions
+      }, this.updateStorage);
+    }
+    this.modalClose();
+  },
   addPosition: function (event) {
     navigator.geolocation.getCurrentPosition(this.getPositionSuccess, this.getPositionError);
   },
