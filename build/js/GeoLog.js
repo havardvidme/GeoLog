@@ -1,7 +1,8 @@
 var MODAL = {
   NONE: 0,
   CONTEXT: 1,
-  REMOVE: 2
+  REMOVE: 2,
+  UPDATE: 3
 };
 var POSITION_TEMPLATE = Object.assign({}, {
   id: 0,
@@ -15,7 +16,9 @@ var GeoLog = React.createClass({
   displayName: 'GeoLog',
 
   propTypes: {
-    onClick: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onClick: React.PropTypes.func,
+    onSubmit: React.PropTypes.func
   },
   getInitialState: function () {
     return {
@@ -77,6 +80,12 @@ var GeoLog = React.createClass({
         { id: MODAL.CONTEXT, label: 'What do you want to du?', modal: this.state.modal, name: 'context', onClick: this.modalClose },
         React.createElement(
           'button',
+          { className: 'btn btn-info btn-block', type: 'button', onClick: this.modalOpen.bind(this, MODAL.UPDATE, null) },
+          this.state.position.description == '' ? 'Add' : 'Update',
+          ' description'
+        ),
+        React.createElement(
+          'button',
           { className: 'btn btn-danger btn-block', type: 'button', onClick: this.modalOpen.bind(this, MODAL.REMOVE, null) },
           'Remove position'
         ),
@@ -105,8 +114,43 @@ var GeoLog = React.createClass({
           'No'
         )
       ),
+      React.createElement(
+        Modal,
+        { id: MODAL.UPDATE, label: 'Description', modal: this.state.modal, name: 'update', onClick: this.modalClose },
+        React.createElement(FormUpdate, { onChange: this.onPositionChange, onSubmit: this.onPositionUpdate, value: this.state.position })
+      ),
       React.createElement('div', { className: this.state.modal == MODAL.NONE ? 'hidden' : 'modal-backdrop fade in' })
     );
+  },
+
+  onPositionChange: function (position) {
+    this.setState({
+      position: position
+    });
+  },
+  onPositionUpdate: function () {
+    var position = Object.assign({}, this.state.position, { errors: {} });
+
+    if (position.description.length > 50) {
+      position.errors.description = ['Your description is too long.'];
+    }
+
+    if (Object.keys(position.errors).length === 0) {
+      delete position.errors;
+      var positions = this.state.positions;
+      var index = _.findIndex(positions, ['id', position.id]);
+      if (index != -1) {
+        positions[index] = position;
+        this.setState({
+          positions: positions
+        }, this.updateStorage);
+        this.modalClose();
+      }
+    } else {
+      this.setState({
+        position: position
+      });
+    };
   },
 
   modalOpen: function (modal, id, event) {
@@ -125,7 +169,7 @@ var GeoLog = React.createClass({
     }
     this.setState({
       modal: MODAL.NONE,
-      position: POSITION_TEMPLATE
+      position: Object.assign({}, POSITION_TEMPLATE)
     });
   },
 
