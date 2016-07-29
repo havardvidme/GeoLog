@@ -19,6 +19,14 @@ var GeoLog = React.createClass({
       positions: []
     };
   },
+  componentDidMount: function () {
+    var id = parseInt(localStorage.getItem('id') || 0);
+    var positions = JSON.parse(localStorage.getItem('positions')) || [];
+    this.setState({
+      id: id,
+      positions: positions
+    });
+  },
   render: function () {
     var positionItems = [];
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
@@ -58,6 +66,11 @@ var GeoLog = React.createClass({
     );
   },
 
+  updateStorage: function () {
+    localStorage.setItem('id', this.state.id);
+    localStorage.setItem('positions', JSON.stringify(this.state.positions));
+  },
+
   addPosition: function (event) {
     navigator.geolocation.getCurrentPosition(this.getPositionSuccess, this.getPositionError);
   },
@@ -74,7 +87,7 @@ var GeoLog = React.createClass({
     this.setState({
       id: id,
       positions: positions
-    });
+    }, this.updateStorage);
   },
   getPositionError: function (error) {
     console.log('code: %s, message: %s', error.code, error.message);
