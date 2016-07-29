@@ -6,6 +6,8 @@ var concat = require('gulp-concat');
 var connect = require('gulp-connect');
 var gulp = require('gulp');
 var pug = require('gulp-pug');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
 
 var config = {
   reactjs: [
@@ -58,7 +60,7 @@ gulp.task('pug-build', function () {
 gulp.task('pug-dist', function () {
   var locals = {
     styles: ['css/vendor.min.css'],
-    scripts: ['js/vendor.min.js']
+    scripts: ['js/vendor.min.js', 'js/local.min.js']
   };
   gulp.src('src/pug/*.pug')
     .pipe(pug({
@@ -75,9 +77,18 @@ gulp.task('react-build', function () {
       presets: ['react']
     }))
     .pipe(gulp.dest('./build/js/'))
-})
+});
+gulp.task('react-dist', function () {
+  var src = _.map(config.reactjs, function (s) { return './build/js/' + s; });
+  gulp.src(src)
+    .pipe(concat('local.js'))
+    .pipe(gulp.dest('./dist/js/'))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(uglify())
+    .pipe(gulp.dest('./dist/js/'));
+});
 
-gulp.task('default', ['vendor-css', 'vendor-fonts', 'vendor-js', 'react-build', 'pug-build', 'pug-dist', 'connect'], function () {
+gulp.task('default', ['vendor-css', 'vendor-fonts', 'vendor-js', 'react-build', 'react-dist', 'pug-build', 'pug-dist', 'connect'], function () {
   gulp.watch('src/pug/**/*.pug', ['pug-build', 'pug-dist']);
-  gulp.watch('src/react/**/*.js', ['react-build']);
+  gulp.watch('src/react/**/*.js', ['react-build', 'react-dist']);
 });
