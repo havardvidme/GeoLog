@@ -1,3 +1,7 @@
+var MODAL = {
+  NONE: 0,
+  CONTEXT: 1
+};
 var POSITION_TEMPLATE = Object.assign({}, {
   id: 0,
   description: '',
@@ -8,10 +12,11 @@ var POSITION_TEMPLATE = Object.assign({}, {
 
 var GeoLog = React.createClass({
   propTypes: {
-    onClick: React.PropTypes.func.isRequired
+    onClick: React.PropTypes.func
   },
   getInitialState: function () {
     return {
+      modal: MODAL.NONE,
       id: 0,
       position: POSITION_TEMPLATE,
       positions: []
@@ -30,13 +35,15 @@ var GeoLog = React.createClass({
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
       positionItems.push(
         <PositionItem
+          key={position.id}
           description={position.description}
           latitude={position.latitude}
           longitude={position.longitude}
           timestamp={position.timestamp}
+          onClick={this.modalOpen.bind(this, MODAL.CONTEXT, position.id)}
         />
       );
-    });
+    }, this);
     return (
       <div>
         <div className="container">
@@ -47,8 +54,31 @@ var GeoLog = React.createClass({
           <hr />
           <div className="list-group">{positionItems}</div>
         </div>
+
+        <Modal id={MODAL.CONTEXT} label="What do you want to du?" modal={this.state.modal} name="context" onClick={this.modalClose}>
+          <p>Context modal goes here</p>
+        </Modal>
+
+        <div className={this.state.modal == MODAL.NONE ? 'hidden' : 'modal-backdrop fade in'} />
       </div>
     );
+  },
+
+  modalOpen: function (modal, id, event) {
+    event.preventDefault();
+    var position = _.find(this.state.positions, ['id', id]);
+    if (position !== undefined) {
+      console.log(position);
+    }
+    this.setState({
+      modal: modal
+    });
+  },
+  modalClose: function (event) {
+    event.preventDefault();
+    this.setState({
+      modal: MODAL.NONE
+    });
   },
 
   updateStorage: function () {

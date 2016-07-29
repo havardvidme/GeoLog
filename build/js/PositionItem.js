@@ -4,7 +4,7 @@ var PositionItem = React.createClass({
   render: function () {
     return React.createElement(
       "a",
-      { className: "list-group-item", href: "#" },
+      { className: "list-group-item", href: "#", onClick: this.props.onClick },
       React.createElement(
         "p",
         { className: "list-group-item-text" },

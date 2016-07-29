@@ -1,7 +1,7 @@
 var PositionItem = React.createClass({
   render: function () {
     return (
-      <a className="list-group-item" href="#">
+      <a className="list-group-item" href="#" onClick={this.props.onClick}>
         <p className="list-group-item-text">
           <span aria-hidden="true" className="glyphicon glyphicon-map-marker" />
           {' '}

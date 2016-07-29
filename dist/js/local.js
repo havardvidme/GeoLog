@@ -1,27 +1,67 @@
+var Modal = React.createClass({
+  displayName: "Modal",
+
+  propTypes: {
+    id: React.PropTypes.number.isRequired,
+    label: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
+    modal: React.PropTypes.number.isRequired,
+    onClick: React.PropTypes.func
+  },
+  render: function () {
+    var closeButton = !this.props.onClick ? null : React.createElement(
+      "button",
+      { "aria-label": "Close", className: "close", onClick: this.props.onClick, type: "button" },
+      React.createElement(
+        "span",
+        { "aria-hidden": "true" },
+        "×"
+      )
+    );
+    var labelId = 'modal-' + this.props.name + '-label';
+    return React.createElement(
+      "div",
+      { "aria-labelledby": labelId, className: "modal fade in", id: 'modal-' + this.props.name, role: "dialog", style: { display: this.props.id == this.props.modal ? 'block' : 'none' }, tabIndex: "-1" },
+      React.createElement(
+        "div",
+        { className: "modal-dialog modal-sm", role: "document" },
+        React.createElement(
+          "div",
+          { className: "modal-content" },
+          React.createElement(
+            "div",
+            { className: "modal-header" },
+            closeButton,
+            React.createElement(
+              "strong",
+              { id: labelId },
+              this.props.label
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "modal-body" },
+            this.props.children
+          )
+        )
+      )
+    );
+  }
+});
 var PositionItem = React.createClass({
-  displayName: 'PositionItem',
+  displayName: "PositionItem",
 
   render: function () {
-    var description = null;
-    if (this.props.description == '') {
-      description = React.createElement(
-        'p',
-        { className: this.props.description == '' ? 'hidden' : 'list-group-item-text' },
-        React.createElement('span', { 'aria-hidden': 'true', className: 'glyphicon glyphicon-comment' }),
-        ' ',
-        this.props.description
-      );
-    }
     return React.createElement(
-      'a',
-      { className: 'list-group-item', href: '#' },
+      "a",
+      { className: "list-group-item", href: "#", onClick: this.props.onClick },
       React.createElement(
-        'p',
-        { className: 'list-group-item-text' },
-        React.createElement('span', { 'aria-hidden': 'true', className: 'glyphicon glyphicon-map-marker' }),
+        "p",
+        { className: "list-group-item-text" },
+        React.createElement("span", { "aria-hidden": "true", className: "glyphicon glyphicon-map-marker" }),
         ' ',
         React.createElement(
-          'strong',
+          "strong",
           null,
           this.props.latitude,
           ', ',
@@ -29,16 +69,26 @@ var PositionItem = React.createClass({
         )
       ),
       React.createElement(
-        'p',
-        { className: 'list-group-item-text' },
-        React.createElement('span', { 'aria-hidden': 'true', className: 'glyphicon glyphicon-time' }),
+        "p",
+        { className: "list-group-item-text" },
+        React.createElement("span", { "aria-hidden": "true", className: "glyphicon glyphicon-time" }),
         ' ',
         this.props.timestamp
       ),
-      description
+      React.createElement(
+        "p",
+        { className: this.props.description == '' ? 'hidden' : 'list-group-item-text' },
+        React.createElement("span", { "aria-hidden": "true", className: "glyphicon glyphicon-comment" }),
+        ' ',
+        this.props.description
+      )
     );
   }
 });
+var MODAL = {
+  NONE: 0,
+  CONTEXT: 1
+};
 var POSITION_TEMPLATE = Object.assign({}, {
   id: 0,
   description: '',
@@ -51,10 +101,11 @@ var GeoLog = React.createClass({
   displayName: 'GeoLog',
 
   propTypes: {
-    onClick: React.PropTypes.func.isRequired
+    onClick: React.PropTypes.func
   },
   getInitialState: function () {
     return {
+      modal: MODAL.NONE,
       id: 0,
       position: POSITION_TEMPLATE,
       positions: []
@@ -72,12 +123,14 @@ var GeoLog = React.createClass({
     var positionItems = [];
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
       positionItems.push(React.createElement(PositionItem, {
+        key: position.id,
         description: position.description,
         latitude: position.latitude,
         longitude: position.longitude,
-        timestamp: position.timestamp
+        timestamp: position.timestamp,
+        onClick: this.modalOpen.bind(this, MODAL.CONTEXT, position.id)
       }));
-    });
+    }, this);
     return React.createElement(
       'div',
       null,
@@ -104,8 +157,35 @@ var GeoLog = React.createClass({
           { className: 'list-group' },
           positionItems
         )
-      )
+      ),
+      React.createElement(
+        Modal,
+        { id: MODAL.CONTEXT, label: 'What do you want to du?', modal: this.state.modal, name: 'context', onClick: this.modalClose },
+        React.createElement(
+          'p',
+          null,
+          'Context modal goes here'
+        )
+      ),
+      React.createElement('div', { className: this.state.modal == MODAL.NONE ? 'hidden' : 'modal-backdrop fade in' })
     );
+  },
+
+  modalOpen: function (modal, id, event) {
+    event.preventDefault();
+    var position = _.find(this.state.positions, ['id', id]);
+    if (position !== undefined) {
+      console.log(position);
+    }
+    this.setState({
+      modal: modal
+    });
+  },
+  modalClose: function (event) {
+    event.preventDefault();
+    this.setState({
+      modal: MODAL.NONE
+    });
   },
 
   updateStorage: function () {

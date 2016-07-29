@@ -1,3 +1,7 @@
+var MODAL = {
+  NONE: 0,
+  CONTEXT: 1
+};
 var POSITION_TEMPLATE = Object.assign({}, {
   id: 0,
   description: '',
@@ -10,10 +14,11 @@ var GeoLog = React.createClass({
   displayName: 'GeoLog',
 
   propTypes: {
-    onClick: React.PropTypes.func.isRequired
+    onClick: React.PropTypes.func
   },
   getInitialState: function () {
     return {
+      modal: MODAL.NONE,
       id: 0,
       position: POSITION_TEMPLATE,
       positions: []
@@ -31,12 +36,14 @@ var GeoLog = React.createClass({
     var positionItems = [];
     _.orderBy(this.state.positions, ['timestamp'], ['desc']).forEach(function (position) {
       positionItems.push(React.createElement(PositionItem, {
+        key: position.id,
         description: position.description,
         latitude: position.latitude,
         longitude: position.longitude,
-        timestamp: position.timestamp
+        timestamp: position.timestamp,
+        onClick: this.modalOpen.bind(this, MODAL.CONTEXT, position.id)
       }));
-    });
+    }, this);
     return React.createElement(
       'div',
       null,
@@ -63,8 +70,35 @@ var GeoLog = React.createClass({
           { className: 'list-group' },
           positionItems
         )
-      )
+      ),
+      React.createElement(
+        Modal,
+        { id: MODAL.CONTEXT, label: 'What do you want to du?', modal: this.state.modal, name: 'context', onClick: this.modalClose },
+        React.createElement(
+          'p',
+          null,
+          'Context modal goes here'
+        )
+      ),
+      React.createElement('div', { className: this.state.modal == MODAL.NONE ? 'hidden' : 'modal-backdrop fade in' })
     );
+  },
+
+  modalOpen: function (modal, id, event) {
+    event.preventDefault();
+    var position = _.find(this.state.positions, ['id', id]);
+    if (position !== undefined) {
+      console.log(position);
+    }
+    this.setState({
+      modal: modal
+    });
+  },
+  modalClose: function (event) {
+    event.preventDefault();
+    this.setState({
+      modal: MODAL.NONE
+    });
   },
 
   updateStorage: function () {

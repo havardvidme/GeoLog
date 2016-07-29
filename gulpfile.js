@@ -11,6 +11,7 @@ var uglify = require('gulp-uglify');
 
 var config = {
   reactjs: [
+    'Modal.js',
     'PositionItem.js',
     'GeoLog.js'
   ],
