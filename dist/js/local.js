@@ -227,7 +227,7 @@ var GeoLog = React.createClass({
       ),
       React.createElement(
         Modal,
-        { id: MODAL.REMOVE, label: 'Remove position', modal: this.state.modal, name: 'remoe', onClick: this.modalClose },
+        { id: MODAL.REMOVE, label: 'Remove position', modal: this.state.modal, name: 'remove', onClick: this.modalClose },
         React.createElement(
           'p',
           null,

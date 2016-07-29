@@ -66,7 +66,7 @@ var GeoLog = React.createClass({
           <button className="btn btn-danger btn-block" type="button" onClick={this.modalOpen.bind(this, MODAL.REMOVE, null)}>Remove position</button>
           <button className="btn btn-default btn-block" type="button" onClick={this.modalClose}>Cancel</button>
         </Modal>
-        <Modal id={MODAL.REMOVE} label="Remove position" modal={this.state.modal} name="remove" onClick={this.modalClose}>
+        <Modal id={MODAL.REMOVE} label="Remove position" modal={this.state.modal} name="remove">
           <p>Are you sure you want to remove this position?</p>
           <button className="btn btn-danger btn-block" type="button" onClick={this.removePosition}>Yes</button>
           <button className="btn btn-default btn-block" type="button" onClick={this.modalClose}>No</button>
