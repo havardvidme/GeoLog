@@ -1,10 +1,11 @@
 'use strict';
 
 var prefixUrls = function (arr, prefix) {
+  var res = [];
   for (var i = 0, j = arr.length; i < j; i++) {
-    arr[i] = prefix + arr[i];
+    res.push(prefix + arr[i]);
   }
-  return arr;
+  return res;
 };
 
 var concat = require('gulp-concat');
