@@ -1,13 +1,6 @@
 'use strict';
 
-var prefixUrls = function (arr, prefix) {
-  var res = [];
-  for (var i = 0, j = arr.length; i < j; i++) {
-    res.push(prefix + arr[i]);
-  }
-  return res;
-};
-
+var _ = require('lodash');
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
 var connect = require('gulp-connect');
@@ -49,10 +42,12 @@ gulp.task('vendor-js', function () {
 });
 
 gulp.task('pug-build', function () {
-  var locals = {
-    styles: prefixUrls(config.vendorcss, '../'),
-    scripts: prefixUrls(config.vendorjs, '../')
-  };
+  var locals = {};
+  locals.styles = _.map(config.vendorcss, function (s) { return '../' + s; });
+  locals.scripts = _.concat(
+    _.map(config.vendorjs, function (s) { return '../' + s; }),
+    _.map(config.reactjs, function (s) { return 'js/' + s; })
+  );
   gulp.src('src/pug/*.pug')
     .pipe(pug({
       locals: locals,
@@ -74,7 +69,8 @@ gulp.task('pug-dist', function () {
 });
 
 gulp.task('react-build', function () {
-  gulp.src(prefixUrls(config.reactjs, './src/react/'))
+  var src = _.map(config.reactjs, function (s) { return './src/react/' + s; });
+  gulp.src(src)
     .pipe(babel({
       presets: ['react']
     }))

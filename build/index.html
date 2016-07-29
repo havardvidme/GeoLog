@@ -10,9 +10,10 @@
     <script src="../bower_components/lodash/dist/lodash.min.js" type="text/javascript"></script>
     <script src="../bower_components/react/react.min.js" type="text/javascript"></script>
     <script src="../bower_components/react/react-dom.min.js" type="text/javascript"></script>
+    <script src="js/GeoLog.js" type="text/javascript"></script>
   </head>
   <body>
     <div id="react-app"></div>
-    <script type="text/javascript">document.getElementById('react-app').innerHTML = 'React goes here!';</script>
+    <script type="text/javascript"> ReactDOM.render(React.createElement(GeoLog, null), document.getElementById('react-app'));</script>
   </body>
 </html>
