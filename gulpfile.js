@@ -15,9 +15,9 @@ var config = {
     'GeoLog.js'
   ],
   vendorjs: [
-    'bower_components/lodash/dist/lodash.min.js',
-    'bower_components/react/react.min.js',
-    'bower_components/react/react-dom.min.js'
+    'bower_components/lodash/dist/lodash.js',
+    'bower_components/react/react.js',
+    'bower_components/react/react-dom.js'
   ],
   vendorcss: [
     'bower_components/bootstrap/dist/css/bootstrap.min.css'
@@ -40,6 +40,10 @@ gulp.task('vendor-fonts', function () {
 });
 gulp.task('vendor-js', function () {
   gulp.src(config.vendorjs)
+    .pipe(concat('vendor.js'))
+    .pipe(gulp.dest('./dist/js/'));
+  var src = _.map(config.vendorjs, function (s) { return s.replace('.js', '.min.js'); });
+  gulp.src(src)
     .pipe(concat('vendor.min.js'))
     .pipe(gulp.dest('./dist/js/'));
 });
